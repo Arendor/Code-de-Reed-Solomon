@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-int mod(typeOf n, int premier) {
+typeOf mod(typeOf n, int premier) {
 
     /*while (!(0 <= n && n < premier)) {
 
@@ -20,9 +20,16 @@ int mod(typeOf n, int premier) {
 
 }
 
-typeOf toPower(typeOf value, int toPower, int premier) {
+typeOf toPower(typeOf value, int powerOf, int premier) {
 
-    return mod((int)pow((double)value, (double)toPower), premier);
+    return mod((typeOf)pow((double)value, (double)powerOf), premier);
+}
+
+typeOf pPow(typeOf value, int powerOf, int premier) {
+
+    if (powerOf * log(value) > log(INT_MAX)) return protectedPow(value, powerOf, premier);
+    else return toPower(value, powerOf, premier);
+
 }
 
 typeOf protectedPow(typeOf value, int toPower, int premier) {
@@ -62,6 +69,13 @@ int invMod(typeOf n, int premier) {
 
 }
 
+int nbVide(typeOf(**a), int nb_row, int nb_column) {
+    int sum = 0;
+
+    for (int i = 0; i < nb_row; i++) sum += vide(a[i], nb_column);
+
+    return sum;
+}
 
 int vide(typeOf* array, int size) {
     for (int i = 0; i < size; i++) {

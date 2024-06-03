@@ -12,7 +12,7 @@ endif()
 project ("reed_solomon" C)
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (CMakeTarget "reed_solomon.c" "reed_solomon.h" "lagrange.c" "lagrange.h" "utils.c" "utils.h")
+add_executable (CMakeTarget "reed_solomon.c" "reed_solomon.h" "lagrange.c" "lagrange.h" "utils.c" "utils.h" "decode.c" "decode.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET CMakeTarget PROPERTY CXX_STANDARD 20)
