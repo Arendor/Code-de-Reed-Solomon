@@ -57,6 +57,63 @@ typeOf applicationPol(typeOf* pol, int size, int value, int premier) {
     return sum;
 }
 
+void putAtTheEnd(typeOf (**a), int nb_row, int nb_column, int line) {
+
+    for (int i = 0; i < nb_column; i++) {
+        int save = a[line][i];
+
+        for (int j = line + 1; j < nb_row - 1; j++) {
+            a[j][i] = a[j + 1][i];
+        };
+
+        a[nb_row - 1][i] = save;
+
+    }
+
+    return;
+
+}
+
+int findFirstNonNull(typeOf* array, int size) {
+
+    for (int i = 0; i < size; i++) {
+        if (array[i] != 0) return i;
+    }
+
+    printf("\n-1\n");
+
+    return -1;
+}
+
+int findLastNonNullRow(typeOf(**matrice), int nb_row, int nb_column) {
+
+    for (int i = nb_row - 1; i >= 0; i--) {
+
+        if (vide(matrice[i], nb_column) == 0) return i;
+
+    };
+
+    printf("\nNo non empty row in the matrice\n");
+    printMat(matrice, nb_row, nb_column);
+
+    return -1;
+
+}
+
+// Will switch line a and b
+void switchLine(typeOf(**matrice), int nb_row, int nb_column, int a, int b) {
+
+    typeOf save;
+
+    for (int i = 0; i < nb_column; i++) {
+        save = matrice[a][i];
+        matrice[a][i] = matrice[b][i];
+        matrice[b][i] = save;
+    }
+
+    return;
+}
+
 int invMod(typeOf n, int premier) {
 
     int inv = 1;

@@ -148,7 +148,7 @@ int main(int argc, const char* argv[]) {
 
 
         // If the first is 0, that means is dont have any inverse mod so no calculations
-        if ( i + 1 < nb_colum && augmented_matrice[i][adjusted_column] != 0) {
+        if ( /*i + 1 < nb_colum &&*/ augmented_matrice[i][adjusted_column] != 0) {
             int multiplier = invMod(augmented_matrice[i][adjusted_column], premier);
 
             // Updating the line
@@ -167,12 +167,22 @@ int main(int argc, const char* argv[]) {
             }
         }
         else {
-            modifier -= 1;
+
+            int p = findFirstNonNull(augmented_matrice[i], nb_colum - 1);
+            if (p != -1) {
+                // p can only be superior to 
+                switchLine(augmented_matrice, nb_row, nb_colum, i, p);
+                i -= 1;
+            } else if (findLastNonNullRow(augmented_matrice, nb_row, nb_colum) > i) {
+                putAtTheEnd(augmented_matrice, nb_row, nb_colum, i);
+                i -= 1;
+            }
+            
         }
 
         //printMatrice(augmented_matrice, nb_row, nb_colum);
         printMat(augmented_matrice, nb_row, nb_colum);
-        //printf("\n%d\n", i);
+        //printf("\n%d\n", modifier);
 
         //printf("ligne %d \n", i + 1);
 
@@ -210,14 +220,13 @@ int main(int argc, const char* argv[]) {
     // Substituting everything back
     //return 0;
 
-   if (nb_row == nb_colum - 1)
         for (i = nb_row - 2; i >= 0; i--) {
-        // THIS IS WHERE THE MATRIX NEED TO BE SQUARED
-        for (j = i + 1; j < nb_colum - 1; j++) {
-            // Need to change in case of non square matrix
-            int coef = augmented_matrice[i][j];
-            augmented_matrice[i][j] = mod(augmented_matrice[i][j] - coef * augmented_matrice[j][j], premier); // 0;
-            augmented_matrice[i][nb_colum - 1] = mod(augmented_matrice[i][nb_colum - 1] - coef * augmented_matrice[j][nb_colum - 1], premier);
+            // THIS IS WHERE THE MATRIX NEED TO BE SQUARED
+            for (j = i + 1; j < nb_colum - 1; j++) {
+             // Need to change in case of non square matrix
+                int coef = augmented_matrice[i][j];
+                augmented_matrice[i][j] = mod(augmented_matrice[i][j] - coef * augmented_matrice[j][j], premier); // 0;
+                augmented_matrice[i][nb_colum - 1] = mod(augmented_matrice[i][nb_colum - 1] - coef * augmented_matrice[j][nb_colum - 1], premier);
         };
 
     }// else
@@ -237,12 +246,12 @@ int main(int argc, const char* argv[]) {
 
     printMat(augmented_matrice, nb_row, nb_colum);
 
-    return 0;
+    //return 0;
     // Doing the synthetic division
 
     // Number of errors is not always the same(dynamic value)
-    int nb_errors = 2;
-    int original_size = 3; // nb_row - 2 * nb_errors
+    int nb_errors = n_errors;
+    int original_size = nb_row - 2 * nb_errors;
 
     // Pol are defined from the highest degree to the lowest degree
     typeOf* AllPol = calloc(nb_row - nb_errors, sizeof(typeOf));
@@ -261,19 +270,20 @@ int main(int argc, const char* argv[]) {
 
     // Initialize the Error function
     for (i = 0; i < nb_errors; i++) {
-        ErrPol[i + 1] = augmented_matrice[i + nb_row - nb_errors][nb_colum - 1];
+        ErrPol[i + 1] = - augmented_matrice[i + nb_row - nb_errors][nb_colum - 1];
     };
 
-    //
+    printArray(AllPol, nb_row - nb_errors);
+    printArray(ErrPol, nb_errors + 1);
 
-    for (i = 0; i < nb_row - 2 * nb_errors; i++) {
+    for (i = 0; i < original_size; i++) {
 
         // Set the coef of the result as the coef corresponding
         GenPol[i] = AllPol[i];
 
         // Doing the calculations on the next coef of degree impacted
         for (j = 1; j < nb_errors + 1; j++) {
-            AllPol[i + j] = mod(AllPol[i + j] - ErrPol[i + j] * AllPol[i], premier);
+            AllPol[i + j] = mod(AllPol[i + j] - ErrPol[j] * AllPol[i], premier);
         }
 
         // The pol in the fraction is now a degree less
@@ -286,6 +296,7 @@ int main(int argc, const char* argv[]) {
     printResult(GenPol, original_size);
 
     // Free all the dynamic arrays 
+    free(augmented_matrice);
     free(AllPol);
     free(ErrPol);
     free(GenPol);
